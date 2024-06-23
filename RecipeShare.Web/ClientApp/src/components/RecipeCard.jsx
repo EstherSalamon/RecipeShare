@@ -8,7 +8,7 @@ const RecipeCard = ({title, image, category, ingredients, steps, isPublic }) => 
                 <h3 className="text-center" style={{ fontFamily: 'Arial, sans-serif', color: '#343a40' }}>{title}</h3>
                 {image && (
                     <div className="d-flex justify-content-center mb-3">
-                       {/* <img src={image} alt="Recipe Preview" className="img-fluid" style={{ width: '150px', height: '150px', borderRadius: '10px', objectFit: 'cover' }} />*/}
+                        <img src={image} alt="Recipe Preview" className="img-fluid" style={{ width: '150px', height: '150px', borderRadius: '10px', objectFit: 'cover' }} />
                     </div>
                 )}
                 <div style={{ flex: '1 1 auto', overflowY: 'auto' }}>

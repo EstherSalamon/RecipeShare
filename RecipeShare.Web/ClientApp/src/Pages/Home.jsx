@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootswatch/dist/sketchy/bootstrap.min.css";
 import './Home.css';
 import axios from 'axios';
 import RecipeCard from '../components/RecipeCard';
@@ -30,7 +30,7 @@ const Home = () => {
                     <div className='col-md-4 mb-4' key={r.id}>
                         <RecipeCard
                             title={r.title}
-                            //image={'/images/???/r.imageurl'}
+                            image={`api/recipes/getimage?img=${r.image}`}
                             category={r.category}
                             ingredients={r.ingredients}
                             steps={r.directions}

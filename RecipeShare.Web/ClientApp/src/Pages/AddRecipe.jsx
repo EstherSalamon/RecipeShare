@@ -32,15 +32,16 @@ const AddRecipe = () => {
 
     const onFormSubmit = async () => {
         const base64 = toBase64(imageUrl);
-        await axios.post('/api/recipes/addrecipe', {
-            title,
+        const recipe = {
+            Title: title,
             imageUrl: base64,
             Category: cat,
             IngredientsL: ingredients,
             DirectionsL: directions,
-            allowPublic
-        });
-        navigate('/home');
+            AllowPublic: allowPublic
+        }
+        await axios.post('/api/recipes/addrecipe', recipe);
+        navigate('/');
     };
 
     const onAddIRowClick = () => {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using RecipeShare.Data;
 using RecipeShare.Web.Models;
 using System.Text.Json;
@@ -11,12 +12,10 @@ namespace RecipeShare.Web.Controllers
     public class RecipesController : ControllerBase
     {
         private readonly string _connection;
-        private readonly IWebHostEnvironment _webEnv;
 
-        public RecipesController(IConfiguration config, IWebHostEnvironment webEnv)
+        public RecipesController(IConfiguration config)
         {
             _connection = config.GetConnectionString("ConStr");
-            _webEnv = webEnv;
         }
 
         [HttpGet]
@@ -54,19 +53,17 @@ namespace RecipeShare.Web.Controllers
         public void AddRecipe(RecipeVM rep)
         {
             Repository repo = new Repository(_connection);
-
             int indexOfComma = rep.ImageUrl.IndexOf(",");
             string base64 = rep.ImageUrl.Substring(indexOfComma + 1);
             byte[] bytes = Convert.FromBase64String(base64);
             Guid guid = new Guid();
-            System.IO.File.WriteAllBytes(guid.ToString(), bytes);
-            string path = Path.Combine(_webEnv.WebRootPath, "uploads", guid.ToString());
+            System.IO.File.WriteAllBytes($"/uploads/{guid}", bytes);
 
             Recipe converted = new Recipe
             {
                 Id = rep.Id,
                 Title = rep.Title,
-                ImageUrl = path,
+                ImageUrl = guid.ToString(),
                 Category = rep.Category,
                 IngredientsJ = JsonSerializer.Serialize(rep.IngredientsL),
                 DirectionsJ = JsonSerializer.Serialize(rep.DirectionsL),
@@ -93,6 +90,14 @@ namespace RecipeShare.Web.Controllers
                 recipesList.Add(vm);
             }
             return recipesList;
+        }
+
+        [HttpGet]
+        [Route("getimage")]
+        public IActionResult GetImage(string imageName)
+        {
+            Byte[] bytes = System.IO.File.ReadAllBytes($"/uploads/{imageName}.jpg");
+            return File(bytes, "image/jpg");
         }
     }
 }
