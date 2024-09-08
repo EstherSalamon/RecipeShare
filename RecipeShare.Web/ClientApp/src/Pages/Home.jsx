@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import "bootswatch/dist/sketchy/bootstrap.min.css";
+import "bootswatch/dist/flatly/bootstrap.min.css";
 import './Home.css';
 import axios from 'axios';
 import RecipeCard from '../components/RecipeCard';
@@ -26,18 +26,20 @@ const Home = () => {
                 <p className='lead'>This is where we share the most amazing recipes ever!</p>
                 <hr className='my-5' />
                 <p>These are some of our latest recipes. Read, and be inspired.</p>
-                {recipes && recipes.map(r =>
-                    <div className='col-md-4 mb-4' key={r.id}>
+                <div className='row'>
+                    {recipes && recipes.map(r =>
                         <RecipeCard
+                            className='card col-4'
+                            key={r.id}
                             title={r.title}
-                            image={`api/recipes/getimage?img=${r.image}`}
-                            category={r.category}
+                            image={`/api/recipes/getimage?imagename=${r.imageUrl}`}
+                            category={r.category.name}
                             ingredients={r.ingredients}
                             steps={r.directions}
                             isPublic={r.allowPublic}
                         />
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     );

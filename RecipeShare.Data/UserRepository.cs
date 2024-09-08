@@ -46,5 +46,11 @@ namespace RecipeShare.Data
             using RecipesDataContext context = new RecipesDataContext(_connection);
             return context.Users.FirstOrDefault(u => u.Email == email);
         }
+
+        public bool EmailExists(string email)
+        {
+            using RecipesDataContext context = new RecipesDataContext(_connection);
+            return context.Users.Any(u => u.Email == email);
+        }
     }
 }

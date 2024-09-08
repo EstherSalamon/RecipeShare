@@ -1,9 +1,9 @@
 ﻿import React from 'react';
 import { FaCheckCircle, FaList, FaUserAlt } from 'react-icons/fa';
 
-const RecipeCard = ({title, image, category, ingredients, steps, isPublic }) => {
+const RecipeCard = ({title, image, category, ingredients, steps, isPublic, className }) => {
     return (
-        <div className="card shadow-sm h-100" style={{ borderRadius: '15px' }}>
+        <div className={className} style={{ borderRadius: '15px' }}>
             <div className="card-body d-flex flex-column" style={{ maxHeight: '500px', overflow: 'hidden' }}>
                 <h3 className="text-center" style={{ fontFamily: 'Arial, sans-serif', color: '#343a40' }}>{title}</h3>
                 {image && (

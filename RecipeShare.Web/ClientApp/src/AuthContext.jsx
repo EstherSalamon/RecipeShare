@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect, useContext, createContext } from 'react';
 import axios from 'axios';
+import './Pages/Home.css';
 
 const AuthContext = createContext();
 
@@ -22,9 +23,11 @@ const AuthComponent = ({ children }) => {
 
     if (isLoading) {
         return (
-            <div style={{ marginTop: 80 }}>
-                <h1>Loading...</h1>
+            <div className="app-container" style={{backgroundColor: 'black'} }>
+            <div className="d-flex flex-column justify-content-center align-items-center">
+            <span className='loader'></span>
             </div>
+        </div>
         )
     }
 

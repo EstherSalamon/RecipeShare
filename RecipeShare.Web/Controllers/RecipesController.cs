@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using RecipeShare.Data;
@@ -18,85 +19,66 @@ namespace RecipeShare.Web.Controllers
             _connection = config.GetConnectionString("ConStr");
         }
 
-        [HttpGet]
-        [Route("getcategories")]
+        [HttpGet("getcategories")]
         public List<Category> GetCategories()
         {
-            Repository repo = new Repository(_connection);
+            RecipeRepository repo = new RecipeRepository(_connection);
             UserRepository userRepo = new UserRepository(_connection);
             User user = userRepo.GetUserByEmail(User.Identity.Name);
-            return repo.GetCategories(user);
+            List<Category> meows = repo.GetCategories(user);
+            foreach(var c in meows)
+            {
+                c.TotalRecipes = repo.TotalRecipesForCategory(c.Id);
+            }
+            return meows;
         }
 
-        [HttpPost]
-        [Route("addcategory")]
+        [HttpPost("addcategory")]
         public void AddCategory(CategoryVM cat)
         {
             UserRepository userRepo = new UserRepository(_connection);
             User user = userRepo.GetUserByEmail(User.Identity.Name);
             cat.Category.UserID = user.ID;
-            Repository repo = new Repository(_connection);
+            RecipeRepository repo = new RecipeRepository(_connection);
             repo.AddCategory(cat.Category);
         }
 
-        [HttpGet]
-        [Route("getall")]
-        public List<RecipeVM> GetRecipes()
+        [HttpGet("getall")]
+        public List<Recipe> GetRecipes()
         {
-            Repository repo = new Repository(_connection);
-            List<RecipeVM> recipesList = ConvertFromDatabase(repo.GetRecipes());
-            return recipesList;
-        }
-
-        [HttpPost]
-        [Route("addrecipe")]
-        public void AddRecipe(RecipeVM rep)
-        {
-            Repository repo = new Repository(_connection);
-            int indexOfComma = rep.ImageUrl.IndexOf(",");
-            string base64 = rep.ImageUrl.Substring(indexOfComma + 1);
-            byte[] bytes = Convert.FromBase64String(base64);
-            Guid guid = new Guid();
-            System.IO.File.WriteAllBytes($"/uploads/{guid}", bytes);
-
-            Recipe converted = new Recipe
+            RecipeRepository repo = new RecipeRepository(_connection);
+            List<Recipe> recipes = repo.GetRecipes();
+            foreach (var r in recipes)
             {
-                Id = rep.Id,
-                Title = rep.Title,
-                ImageUrl = guid.ToString(),
-                Category = rep.Category,
-                IngredientsJ = JsonSerializer.Serialize(rep.IngredientsL),
-                DirectionsJ = JsonSerializer.Serialize(rep.DirectionsL),
-                AllowPublic = rep.AllowPublic
-            };
-            repo.AddRecipe(converted);
-        }
-
-        private List<RecipeVM> ConvertFromDatabase(List<Recipe> recipes)
-        {
-            List<RecipeVM> recipesList = new List<RecipeVM>();
-            foreach (Recipe rep in recipes)
-            {
-                RecipeVM vm = new RecipeVM
-                {
-                    Id = rep.Id,
-                    Title = rep.Title,
-                    ImageUrl = rep.ImageUrl,
-                    Category = rep.Category,
-                    IngredientsL = JsonSerializer.Deserialize<string[]>(rep.IngredientsJ).ToList(),
-                    DirectionsL = JsonSerializer.Deserialize<string[]>(rep.DirectionsJ).ToList(),
-                    AllowPublic = rep.AllowPublic
-                };
-                recipesList.Add(vm);
+                r.Ingredients = JsonSerializer.Deserialize<List<string>>(r.IngredientsJ);
+                r.Directions = JsonSerializer.Deserialize<List<string>>(r.DirectionsJ);
             }
-            return recipesList;
+            return recipes;
         }
 
-        [HttpGet]
-        [Route("getimage")]
+        [HttpPost("addrecipe")]
+        [Authorize]
+        public void AddRecipe(Recipe recipe)
+        {
+            RecipeRepository repo = new RecipeRepository(_connection);
+            int indexOfComma = recipe.Base64.IndexOf(",");
+            string base64 = recipe.Base64.Substring(indexOfComma + 1);
+            byte[] bytes = Convert.FromBase64String(base64);
+            Guid guid = Guid.NewGuid();
+            System.IO.File.WriteAllBytes($"Uploads/{guid}", bytes);
+
+            UserRepository userRepo = new UserRepository(_connection);
+            recipe.UserID = userRepo.GetUserByEmail(User.Identity.Name).ID;
+            recipe.IngredientsJ = JsonSerializer.Serialize(recipe.Ingredients);
+            recipe.DirectionsJ = JsonSerializer.Serialize(recipe.Directions);
+            recipe.ImageUrl = guid.ToString();
+            repo.AddRecipe(recipe);
+        }
+
+        [HttpGet("getimage")]
         public IActionResult GetImage(string imageName)
         {
-            Byte[] bytes = System.IO.File.ReadAllBytes($"/uploads/{imageName}.jpg");
+            Byte[] bytes = System.IO.File.ReadAllBytes($"Uploads/{imageName}");
             return File(bytes, "image/jpg");
         }
     }

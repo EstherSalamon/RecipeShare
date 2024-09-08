@@ -4,6 +4,7 @@ import axios from 'axios';
 const Categories = () => {
 
     const [category, setCategory] = useState({
+        id: '',
         name: '',
         totalRecipes: 0
     });
@@ -40,7 +41,7 @@ const Categories = () => {
                 <h2 className="mb-4 text-center">Categories</h2>
                 <div className="input-group">
                     <input type="text" className="form-control" name='name' placeholder="Add new category" value={category.name} onChange={onTextChange} />
-                    <button className="btn btn-primary" onClick={onAddClick}>Add</button>
+                    <button className="btn btn-primary" disabled={!category.name} onClick={onAddClick}>Add</button>
                 </div>
                 <br/>
                 <ul className="list-group shadow-sm">

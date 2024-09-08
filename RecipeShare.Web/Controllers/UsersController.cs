@@ -60,6 +60,7 @@ namespace RecipeShare.Web.Controllers
             }
 
             UserRepository repo = new UserRepository(_connection);
+            //System.Threading.Thread.Sleep(3000);
             return repo.GetUserByEmail(User.Identity.Name);
         }
 
@@ -68,6 +69,13 @@ namespace RecipeShare.Web.Controllers
         public void LogOut()
         {
             HttpContext.SignOutAsync().Wait();
+        }
+
+        [HttpGet("emailexists")]
+        public bool EmailExists(string email)
+        {
+            UserRepository repo = new UserRepository(_connection);
+            return repo.EmailExists(email);
         }
     }
 }
