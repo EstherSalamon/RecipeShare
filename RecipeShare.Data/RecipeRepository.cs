@@ -22,29 +22,41 @@ namespace RecipeShare.Data
             return context.Categories.Where(c => c.UserID == user.ID).ToList();
         }
 
-        public void AddCategory(Category cat)
+        public void AddCategory(Category category)
         {
             using RecipesDataContext context = new RecipesDataContext(_connection);
-            context.Categories.Add(cat);
+            context.Categories.Add(category);
             context.SaveChanges();
         }
 
         public List<Recipe> GetRecipes()
         {
             using RecipesDataContext context = new RecipesDataContext(_connection);
-            return context.Recipes.Include(r => r.Category).ToList();
+            return context.Recipes.Include(r => r.Category).Where(r => r.AllowPublic == true).ToList();
         }
 
-        public void AddRecipe(Recipe rep)
+        public void AddRecipe(Recipe recipe)
         {
             using RecipesDataContext context = new RecipesDataContext(_connection);
-            context.Database.ExecuteSqlInterpolated($"INSERT INTO Recipes VALUES ({rep.Title}, {rep.ImageUrl}, {rep.IngredientsJ}, {rep.DirectionsJ}, {rep.AllowPublic}, {rep.UserID}, {rep.Category.Id})");
+            context.Database.ExecuteSqlInterpolated($"INSERT INTO Recipes VALUES ({recipe.Title}, {recipe.ImageUrl}, {recipe.IngredientsJ}, {recipe.DirectionsJ}, {recipe.AllowPublic}, {recipe.UserID}, {recipe.Category.Id})");
         }
 
-        public int TotalRecipesForCategory(int catId)
+        public int TotalRecipesForCategory(int categoryId)
         {
             using RecipesDataContext context = new RecipesDataContext(_connection);
-            return context.Recipes.Where(r => r.Category.Id == catId).ToArray().Length;
+            return context.Recipes.Where(r => r.Category.Id == categoryId).ToArray().Length;
+        }
+
+        public List<Recipe> GetByUser(int userId)
+        {
+            using RecipesDataContext context = new RecipesDataContext(_connection);
+            return context.Recipes.Where(r => r.UserID == userId).Include(r => r.Category).ToList();
+        }
+        
+        public void UpdatePublic(int recipeId)
+        {
+            using RecipesDataContext context = new RecipesDataContext(_connection);
+            context.Database.ExecuteSqlInterpolated($"UPDATE Recipes SET AllowPublic = ~AllowPublic WHERE Id = {recipeId}");
         }
     }
 }

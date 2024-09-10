@@ -3,11 +3,7 @@ import axios from 'axios';
 
 const Categories = () => {
 
-    const [category, setCategory] = useState({
-        id: '',
-        name: '',
-        totalRecipes: 0
-    });
+    const [category, setCategory] = useState('');
     const [allCategories, setAllCategories] = useState([]);
 
     useEffect(() => {
@@ -22,26 +18,22 @@ const Categories = () => {
     };
 
     const onAddClick = async () => {
-        await axios.post('/api/recipes/addcategory', { Category: category });
+        await axios.post('/api/recipes/addcategory', {
+            Category: {
+                name: category
+            }
+        });
         loadCategories();
-        const copy = { ...category };
-        copy.name = '';
-        setCategory(copy);
+        setCategory('');
     };
-
-    const onTextChange = e => {
-        const copy = { ...category };
-        copy[e.target.name] = e.target.value;
-        setCategory(copy);
-    }
 
     return (
         <div style={{ marginTop: 80 }}>
             <div className="container mt-5" style={{ maxWidth: 600 }}>
                 <h2 className="mb-4 text-center">Categories</h2>
                 <div className="input-group">
-                    <input type="text" className="form-control" name='name' placeholder="Add new category" value={category.name} onChange={onTextChange} />
-                    <button className="btn btn-primary" disabled={!category.name} onClick={onAddClick}>Add</button>
+                    <input type="text" className="form-control" name='name' placeholder="Add new category" value={category} onChange={e => setCategory(e.target.value)} />
+                    <button className="btn btn-primary" disabled={!category} onClick={onAddClick}>Add</button>
                 </div>
                 <br/>
                 <ul className="list-group shadow-sm">

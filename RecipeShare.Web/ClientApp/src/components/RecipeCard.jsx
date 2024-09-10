@@ -1,7 +1,8 @@
 ﻿import React from 'react';
 import { FaCheckCircle, FaList, FaUserAlt } from 'react-icons/fa';
 
-const RecipeCard = ({title, image, category, ingredients, steps, isPublic, className }) => {
+const RecipeCard = ({ title, image, category, ingredients, steps, isPublic, className, allowUpdate, id, updatePublicity }) => {
+
     return (
         <div className={className} style={{ borderRadius: '15px' }}>
             <div className="card-body d-flex flex-column" style={{ maxHeight: '500px', overflow: 'hidden' }}>
@@ -31,7 +32,11 @@ const RecipeCard = ({title, image, category, ingredients, steps, isPublic, class
                             </div>
                         ))}
                     </div>
-                    <p><strong>Public:</strong> {isPublic ? <FaUserAlt style={{ color: '#28a745' }} /> : <FaUserAlt style={{ color: '#dc3545' }} />}</p>
+                    <p></p>
+                    {allowUpdate && <>
+                        <p><strong>Public:</strong> {isPublic ? <FaUserAlt style={{ color: '#28a745' }} /> : <FaUserAlt style={{ color: '#dc3545' }} />}</p>
+                        <p><button className={isPublic ? 'btn btn-danger' : 'btn btn-success'} onClick={_ => updatePublicity(id)}>{isPublic ? 'Remove from Public View' : 'Allow Public View'}</button></p>
+                    </>}
                 </div>
             </div>
         </div>

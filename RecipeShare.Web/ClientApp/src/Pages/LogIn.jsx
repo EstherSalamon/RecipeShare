@@ -31,7 +31,7 @@ const LogIn = () => {
                                 <h1>Log In Here</h1>
                             </div>
                             <div className='card-body'>
-                                {!valid && <h5 className='text-danger'>Invalid login. Try again.</h5>}
+                                {!valid && <h5 className='text-danger'>Invalid login. Please try again.</h5>}
                                 <input type='email' name='email' value={email} onChange={e => setEmail(e.target.value)} placeholder='Email' className='form-control mt-2' />
                                 <input type='password' name='password' value={password} onChange={e => setPassword(e.target.value)} placeholder='Password' className='form-control mt-2' />
                             </div>

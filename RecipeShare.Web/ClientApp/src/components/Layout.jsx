@@ -24,6 +24,7 @@ const Layout = ({ children }) => {
                                 {!user && <li className="nav-item"><Link to="/login" className='nav-link text-light'>Log In</Link></li>}
                                 {user && <li className="nav-item"><Link to="/addrecipe" className='nav-link text-light'>Add Recipe</Link></li>}
                                 {user && <li className="nav-item"><Link to="/categories" className='nav-link text-light'>Categories</Link></li>}
+                                {user && <li className="nav-item"><Link to="/allbyuser" className='nav-link text-light'>My Recipes</Link></li>}
                                 {user && <li className="nav-item"><Link to="/logout" className='nav-link text-light'>Log Out</Link></li>}
                             </ul>
                         </div>

@@ -20,18 +20,18 @@ namespace RecipeShare.Web.Controllers
 
         [HttpPost]
         [Route("signup")]
-        public void SignUp(SignUpVM sivm)
+        public void SignUp(SignUpVM vm)
         {
             UserRepository repo = new UserRepository(_connection);
-            repo.AddUser(sivm.User, sivm.Password);
+            repo.AddUser(vm.User, vm.Password);
         }
 
         [HttpPost]
         [Route("login")]
-        public User LogIn(LogInVM livm)
+        public User LogIn(LogInVM vm)
         {
             UserRepository repo = new UserRepository(_connection);
-            User user = repo.LogIn(livm.Email, livm.Password);
+            User user = repo.LogIn(vm.Email, vm.Password);
 
             if(user is not null)
             {
@@ -60,7 +60,6 @@ namespace RecipeShare.Web.Controllers
             }
 
             UserRepository repo = new UserRepository(_connection);
-            //System.Threading.Thread.Sleep(3000);
             return repo.GetUserByEmail(User.Identity.Name);
         }
 

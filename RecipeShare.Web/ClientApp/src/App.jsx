@@ -9,6 +9,7 @@ import PrivateRoute from './components/PrivateRoute';
 import SignUp from './Pages/SignUp';
 import LogIn from './Pages/LogIn';
 import LogOut from './Pages/LogOut';
+import RecipesByUser from './Pages/RecipesByUser';
 
 const App = () => {
     return (
@@ -20,6 +21,7 @@ const App = () => {
                     <Route path='/login' element={<LogIn />} />
                     <Route path='/categories' element={<PrivateRoute><Categories /></PrivateRoute>} />
                     <Route path='/addrecipe' element={<PrivateRoute><AddRecipe /></PrivateRoute>} />
+                    <Route path='/allbyuser' element={<PrivateRoute><RecipesByUser /></PrivateRoute>} />
                     <Route path='/logout' element={<PrivateRoute><LogOut /></PrivateRoute>} />
                 </Routes>
             </Layout>

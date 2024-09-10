@@ -16,11 +16,11 @@ namespace RecipeShare.Data
             _connection = connection;
         }
 
-        public void AddUser(User u, string password)
+        public void AddUser(User user, string password)
         {
-            u.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
             using RecipesDataContext context = new RecipesDataContext(_connection);
-            context.Users.Add(u);
+            context.Users.Add(user);
             context.SaveChanges();
         }
 

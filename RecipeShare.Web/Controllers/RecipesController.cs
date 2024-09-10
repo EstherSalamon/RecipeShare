@@ -25,22 +25,23 @@ namespace RecipeShare.Web.Controllers
             RecipeRepository repo = new RecipeRepository(_connection);
             UserRepository userRepo = new UserRepository(_connection);
             User user = userRepo.GetUserByEmail(User.Identity.Name);
-            List<Category> meows = repo.GetCategories(user);
-            foreach(var c in meows)
+            List<Category> categories = repo.GetCategories(user);
+            foreach(var c in categories)
             {
                 c.TotalRecipes = repo.TotalRecipesForCategory(c.Id);
             }
-            return meows;
+            return categories;
         }
 
         [HttpPost("addcategory")]
-        public void AddCategory(CategoryVM cat)
+        public void AddCategory(CategoryVM category)
         {
             UserRepository userRepo = new UserRepository(_connection);
             User user = userRepo.GetUserByEmail(User.Identity.Name);
-            cat.Category.UserID = user.ID;
+            category.Category.UserID = user.ID;
+            Console.WriteLine(category.Category.Name);
             RecipeRepository repo = new RecipeRepository(_connection);
-            repo.AddCategory(cat.Category);
+            repo.AddCategory(category.Category);
         }
 
         [HttpGet("getall")]
@@ -80,6 +81,41 @@ namespace RecipeShare.Web.Controllers
         {
             Byte[] bytes = System.IO.File.ReadAllBytes($"Uploads/{imageName}");
             return File(bytes, "image/jpg");
+        }
+
+        [HttpGet("allbyuser")]
+        [Authorize]
+        public List<Recipe> GetAllRecipesForUser()
+        {
+            if(!User.Identity.IsAuthenticated)
+            {
+                return null;
+            }
+
+            UserRepository uRepo = new UserRepository(_connection);
+            User user = uRepo.GetUserByEmail(User.Identity.Name);
+            RecipeRepository rRepo = new RecipeRepository(_connection);
+            List<Recipe> recipes = rRepo.GetByUser(user.ID);
+            foreach (var r in recipes)
+            {
+                r.Ingredients = JsonSerializer.Deserialize<List<string>>(r.IngredientsJ);
+                r.Directions = JsonSerializer.Deserialize<List<string>>(r.DirectionsJ);
+            }
+            return recipes;
+        }
+
+        [HttpPost("updatepublic")]
+        [Authorize]
+        public void UpdateRecipePublicity(UpdateVM vm)
+        {
+            UserRepository uRepo = new UserRepository(_connection);
+            User user = uRepo.GetUserByEmail(User.Identity.Name);
+            if(user.ID != vm.UserId)
+            {
+                return;
+            }
+            RecipeRepository repo = new RecipeRepository(_connection);
+            repo.UpdatePublic(vm.RecipeId);
         }
     }
 }

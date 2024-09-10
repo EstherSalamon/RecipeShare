@@ -55,9 +55,3 @@
         height: 18px
     }
 }
-
-.card-columns {
-    @include: media-breakpoint-only(lg) {
-        column-count: 2;
-    }
-}
